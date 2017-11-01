@@ -26,7 +26,7 @@ sub2frame.loc[sub2.mutation=='V456D','x']=1
 sub3frame.loc[sub3.mutation=='I213N','x']=1
 #print(sub3frame)
 
-# Define function y=B0+error
+#### Define null function
 def nllikeNull(p,obs):
     B0=p[0]
     sigma=p[1]
@@ -34,25 +34,45 @@ def nllikeNull(p,obs):
     expected=B0
     nll=-1*norm(expected,sigma).logpdf(obs.y).sum()
     return nll
-    print(nll)
 
-### estimate parameters by minimizing the NLL
+# estimate parameters by minimizing the NLL for sub1frame
 initialGuess=numpy.array([1,1])
 fit=minimize(nllikeNull,initialGuess,method="Nelder-Mead",options={'disp': True},args=sub1frame)
-print(fit.fun)
+nullM124K= fit.fun #M124K
+#gives NLL value for affect of mutation 1 in null model
+#print(nullM124K)
 
-# Define function y=B0+B1*treaterror
+initialGuess=numpy.array([1,1])
+fit=minimize(nllikeNull,initialGuess,method="Nelder-Mead",options={'disp': True},args=sub2frame)
+nullV456D= fit.fun #V456D
+
+initialGuess=numpy.array([1,1])
+fit=minimize(nllikeNull,initialGuess,method="Nelder-Mead",options={'disp': True},args=sub3frame)
+nullI213N = fit.fun #I213N
+
+#### Define function y=B0+B1*treat+error
 def nllike(p,obs):
     B0=p[0]
     B1=p[1]
     sigma=p[2]
     
-    expected=B0+B1*obs.x
-    nll=-1*norm(expected,sigma).logpdf(obs.y).sum()
+    expectedAlt=B0+B1*obs.x
+    nll=-1*norm(expectedAlt,sigma).logpdf(obs.y).sum()
     return nll
    
+#estimate parameters by minimizing the NLL
+initialGuess=numpy.array([1,1,1])
+fit=minimize(nllike,initialGuess,method="Nelder-Mead",options={'disp': True},args=sub1frame)
+altM124K = fit.fun #M124K
 
-### estimate parameters by minimizing the NLL
-initialGuess=numpy.array([1,1])
-fit=minimize(nllike,initialGuess,method="Nelder-Mead",options={'disp': True},args=obs)
-print(fit.fun)
+initialGuess=numpy.array([1,1,1])
+fit=minimize(nllike,initialGuess,method="Nelder-Mead",options={'disp': True},args=sub2frame)
+altV456D = fit.fun #V456D
+
+initialGuess=numpy.array([1,1,1])
+fit=minimize(nllike,initialGuess,method="Nelder-Mead",options={'disp': True},args=sub3frame)
+altI213N = fit.fun #I213N
+
+
+
+
