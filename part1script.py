@@ -73,6 +73,22 @@ initialGuess=numpy.array([1,1,1])
 fit=minimize(nllike,initialGuess,method="Nelder-Mead",options={'disp': True},args=sub3frame)
 altI213N = fit.fun #I213N
 
+### Calculating D values
+DvalM124K = 2*(nullM124K-altM124K)
+print("D-value for M124K= ", DvalM124K)
 
+DvalV456D = 2*(nullV456D-altV456D)
+print("D-value for V456D = ", DvalV456D)
+
+DvalI213N = 2*(nullI213N-altI213N)
+print("D-value for I213N = ", DvalI213N)
+
+### Chi-squared dist test values
+pval1=1-scipy.stats.chi2.cdf(x=DvalM124K,df=1)
+pval2=1-scipy.stats.chi2.cdf(x=DvalV456D,df=1)
+pval3=1-scipy.stats.chi2.cdf(x=DvalI213N,df=1)
+print(pval1)
+print(pval2)
+print(pval3)
 
 
